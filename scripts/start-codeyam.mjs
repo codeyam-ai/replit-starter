@@ -11,6 +11,18 @@ for (const error of [providerError(), portError()]) {
 
 const env = childEnv();
 
+// Report which build is about to run. `--version` prints the version and the
+// release channel, so a staging workspace is identifiable from the log without
+// digging through node_modules -- the thing you most want confirmed when the
+// whole point of the workspace is testing an unreleased build.
+const version = spawnSync("codeyam-editor", ["--version"], {
+  encoding: "utf8",
+  env,
+});
+if (version.status === 0 && version.stdout) {
+  console.log(version.stdout.trim());
+}
+
 // `codeyam-editor start` only self-initializes an empty folder. This repo ships
 // a package.json, so it reads as an existing project and needs an explicit init.
 if (!existsSync(".codeyam/editor.json")) {

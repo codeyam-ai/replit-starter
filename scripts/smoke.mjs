@@ -13,7 +13,7 @@
 // 5000 is taken -- on macOS, AirPlay Receiver holds it by default.
 
 import { spawn, spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -147,8 +147,20 @@ try {
   // registry -- the exact failure that shipped in the first version of this
   // repo, where every `resolved` URL pointed at Replit's internal mirror.
   console.log("\nInstall");
-  sh("npm", ["ci", "--no-audit", "--no-fund"], { cwd: checkout });
-  check("npm ci resolved every dependency", true);
+  // `npm ci` when a lockfile is committed -- it is stricter, and catches a
+  // lockfile that cannot resolve from the public registry (the exact failure
+  // this repo shipped with). The staging variant deliberately commits no
+  // lockfile, so that it always resolves the newest staging build; there,
+  // `npm install` is the only option.
+  const locked = existsSync(join(checkout, "package-lock.json"));
+  sh("npm", [locked ? "ci" : "install", "--no-audit", "--no-fund"], {
+    cwd: checkout,
+  });
+  check(
+    `npm ${locked ? "ci" : "install"} resolved every dependency`,
+    true,
+    undefined,
+  );
 
   // 3. Start on 0.0.0.0:PORT, exactly as the Replit workflow does.
   console.log("\nStart");

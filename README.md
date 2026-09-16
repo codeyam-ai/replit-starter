@@ -158,6 +158,20 @@ If you reach the editor through a tunnel or proxy, add that domain to
 `CODEYAM_ALLOWED_ORIGINS` (comma-separated) or its requests are refused as an
 unknown `Host`.
 
+## Testing unreleased builds
+
+[`codeyam-ai/replit-starter-staging`](https://github.com/codeyam-ai/replit-starter-staging)
+is the same starter pointed at the `staging` dist-tag, for trying changes in a
+hosted workspace before they ship. Its `scripts/` are byte-identical to this
+repo's; when you change one here, copy it there.
+
+The startup banner reports which build is running:
+
+```
+codeyam-editor 0.1.7
+channel: production
+```
+
 ## Updating CodeYam
 
 The dependency is pinned intentionally so new projects remain reproducible.
