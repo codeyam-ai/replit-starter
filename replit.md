@@ -33,9 +33,15 @@ environment. Preserve the CodeYam setup when implementing user requests.
 - Do not remove `--no-open` or change the hosted bind address.
 - Treat `.codeyam/editor.local.json` and AI provider credentials as private.
 
-## Current security constraint
+## Security
 
-The installed CodeYam version has no built-in authentication for its externally
-bound control server. The startup wrapper warns users to keep the workspace and
-preview private. Replace this workaround with CodeYam's generic authenticated
-hosted mode when that package feature is available.
+CodeYam authenticates its control API. The editor binds to `0.0.0.0` for the
+web preview, and on a non-loopback bind CodeYam requires a per-launch session
+token on every control-API request: the browser carries it as the `cy_session`
+HTTP-only cookie, other callers send `Authorization: Bearer <token>` read from
+`.codeyam/session-token`.
+
+- Never set `CODEYAM_INSECURE_BIND=1`. It disables that token requirement.
+- Do not weaken `CODEYAM_ALLOWED_ORIGINS` beyond the domains actually in use.
+- Keep the workspace and preview private regardless, and do not deploy this
+  starter as a public application.

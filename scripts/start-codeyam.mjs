@@ -35,12 +35,16 @@ if (!existsSync(".codeyam/editor.json")) {
   }
 }
 
+// Binding non-loopback makes CodeYam require a session token on every
+// control-API request (browser: the `cy_session` HTTP-only cookie; everything
+// else: `Authorization: Bearer`). That is the default and the starter relies on
+// it -- never set CODEYAM_INSECURE_BIND=1 here, which would turn it off.
 console.warn(
   [
     "",
     "Starting CodeYam Editor for access through the workspace web preview.",
-    "Keep the workspace and its preview private: this package version does not",
-    "yet provide built-in authentication for a non-loopback control server.",
+    "The control API requires a session token on this bind; your browser gets",
+    "it automatically. Keep the workspace and its preview private anyway.",
     "",
   ].join("\n"),
 );

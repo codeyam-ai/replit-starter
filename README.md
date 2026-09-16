@@ -93,13 +93,35 @@ one of them for the editor itself could create a recursive startup.
 
 ## Security status
 
-CodeYam `0.1.10` requires the server to bind to `0.0.0.0` for a hosted web
-preview, but it does not yet provide built-in authentication for that mode.
-Keep both the Replit project and its development preview private.
+CodeYam `0.1.10` authenticates its control API. The starter binds the editor to
+`0.0.0.0` so the Replit web preview can reach it, and on any non-loopback bind
+CodeYam requires a session token on every control-API request by default:
 
-Do not deploy the current starter as a public application. The startup wrapper
-will be simplified once CodeYam provides generic authenticated support for
-hosted browser-based development environments.
+- The token is generated per launch and stored in `.codeyam/session-token`
+  (mode `0600`).
+- The browser UI carries it automatically as the `cy_session` HTTP-only cookie.
+  No UI code is involved and nothing needs to be pasted.
+- Non-browser callers — the CodeYam CLI, operator scripts, `curl` — must send
+  `Authorization: Bearer <token>`, read from that file.
+- A missing or wrong token is rejected with `401`. Requests from a foreign
+  origin, or for a `Host` this editor does not serve, are rejected with `403`.
+
+This is what closes the gap a same-origin check alone leaves open: a browser
+carries the cookie, but a network `curl` that simply sends no `Origin` header
+does not.
+
+**Do not set `CODEYAM_INSECURE_BIND=1` in this starter.** That flag turns the
+token requirement off on a non-loopback bind. It exists for operators who front
+the editor with their own authenticating proxy, which Replit's preview is not.
+
+Keep the Replit project and its preview private anyway. Authentication protects
+the control API; it is not a reason to treat a development workspace — with its
+source, its provider credentials, and a live agent — as something safe to share.
+Do not deploy this starter as a public application.
+
+If you reach the editor through a tunnel or proxy, add that domain to
+`CODEYAM_ALLOWED_ORIGINS` (comma-separated) or its requests are refused as an
+unknown `Host`.
 
 ## Updating CodeYam
 
