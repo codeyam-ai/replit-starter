@@ -4,6 +4,30 @@ This starter runs
 [`@codeyam-editor/codeyam-editor`](https://www.npmjs.com/package/@codeyam-editor/codeyam-editor)
 in a browser-accessible Replit workspace.
 
+## Check the workspace
+
+```bash
+npm run setup
+```
+
+Verifies Node, reports the effective port and provider, initializes
+`.codeyam/editor.json` if it is missing, and runs CodeYam's health checks.
+It is advisory: it reports and exits 0, so warnings on a fresh workspace (no
+scenarios yet, no dev server running) do not look like failures.
+
+Running it is optional — `npm run codeyam` initializes what it needs on its
+own. It exists so setup state is inspectable without starting the editor.
+
+It deliberately makes no git commits. If health reports the agent surface is
+out of sync, repair it explicitly with:
+
+```bash
+npx codeyam-editor editor install-hooks
+```
+
+That command creates a commit, which is why `npm run setup` does not run it
+for you.
+
 ## Start the editor
 
 1. Create a private Replit project from this repository.
