@@ -19,6 +19,11 @@ environment. Preserve the CodeYam setup when implementing user requests.
 - Do not change the configured provider unless the user asks. Leave
   `CODEYAM_PROVIDER` unset so CodeYam handles provider selection itself.
 - Use `package.json` for project dependencies.
+- Do not add an AI provider CLI (`@anthropic-ai/claude-code`, `@openai/codex`,
+  `@google/gemini-cli`, `opencode-ai`) as a dependency. CodeYam installs the
+  CLI for the selected provider on demand.
+- Do not remove the `npm_config_prefix` / `PATH` setup in the startup script;
+  those provider CLI installs fail without it.
 - Keep the editor server on the port selected by the startup script (`5000`).
 - Do not add a second workflow or change the run button target.
 - Do not remove `--no-open` or change the hosted bind address.

@@ -1,4 +1,6 @@
-import { existsSync } from "node:fs";
+import { existsSync, mkdirSync } from "node:fs";
+import { homedir } from "node:os";
+import { delimiter, join } from "node:path";
 import { spawn, spawnSync } from "node:child_process";
 
 const supportedProviders = new Set(["claude", "codex", "gemini", "opencode"]);
@@ -22,6 +24,27 @@ if (!/^\d+$/.test(port) || Number(port) < 1 || Number(port) > 65535) {
   process.exit(1);
 }
 
+// CodeYam installs the selected provider's CLI itself, on first agent session,
+// via `npm install -g <package>`. That fails on a Nix-based host like Replit,
+// where npm's default global prefix lives in the read-only Nix store. Point the
+// prefix at a writable, repo-adjacent dir and put its bin on PATH so the
+// install succeeds and the resulting binary is then discoverable.
+//
+// Deliberately provider-agnostic: this works for whichever CLI CodeYam decides
+// to install, so the starter never has to pin one.
+const globalPrefix =
+  process.env.npm_config_prefix ||
+  join(process.env.HOME || homedir(), ".npm-global");
+const globalBin = join(globalPrefix, "bin");
+
+mkdirSync(globalBin, { recursive: true });
+
+const childEnv = {
+  ...process.env,
+  npm_config_prefix: globalPrefix,
+  PATH: `${globalBin}${delimiter}${process.env.PATH ?? ""}`,
+};
+
 // `codeyam-editor start` only self-initializes an empty folder. This repo ships
 // a package.json, so it reads as an existing project and needs an explicit init.
 if (!existsSync(".codeyam/editor.json")) {
@@ -33,7 +56,7 @@ if (!existsSync(".codeyam/editor.json")) {
   const init = spawnSync(
     "codeyam-editor",
     provider ? ["init", "--provider", provider] : ["init"],
-    { stdio: "inherit" },
+    { stdio: "inherit", env: childEnv },
   );
 
   if (init.error) {
@@ -68,7 +91,7 @@ const editor = spawn(
   ],
   {
     stdio: "inherit",
-    env: process.env,
+    env: childEnv,
   },
 );
 

@@ -18,16 +18,22 @@ pin a provider ahead of that first run instead, set `CODEYAM_PROVIDER` to
 ## AI provider required
 
 CodeYam orchestrates an AI coding CLI; it does not include an AI model or
-provider subscription. Install and authenticate one of these supported CLIs in
-the workspace:
+provider subscription. The supported CLIs are:
 
 - Claude Code
 - Codex
 - Gemini
 - OpenCode
 
-The credentials belong to the selected provider. Store API keys and tokens in
-Replit Secrets, never in source files.
+You do not need to install these yourself, and this starter deliberately does
+not depend on any of them. CodeYam installs the CLI for the selected provider
+on demand, the first time an agent session starts, with `npm install -g`. The
+startup wrapper points npm's global prefix at `~/.npm-global` and adds it to
+`PATH`, because npm's default global prefix is inside Replit's read-only Nix
+store and an install there would fail.
+
+You do still need to authenticate. The credentials belong to the selected
+provider. Store API keys and tokens in Replit Secrets, never in source files.
 
 To switch an initialized project explicitly, run one of:
 
@@ -45,6 +51,7 @@ The startup wrapper uses:
 | Variable | Default | Purpose |
 | --- | --- | --- |
 | `CODEYAM_PROVIDER` | unset | Pins the provider used during first initialization |
+| `npm_config_prefix` | `~/.npm-global` | Writable prefix for provider CLI installs |
 | `PORT` | `5000` | Editor port assigned by the hosted environment |
 | `CODEYAM_EDITOR_PORT` | `5000` | Fallback when `PORT` is not set |
 
