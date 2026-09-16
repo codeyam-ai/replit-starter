@@ -2,13 +2,17 @@ import { existsSync } from "node:fs";
 import { spawn, spawnSync } from "node:child_process";
 
 const supportedProviders = new Set(["claude", "codex", "gemini", "opencode"]);
-const provider = process.env.CODEYAM_PROVIDER || "claude";
-const port = process.env.PORT || process.env.CODEYAM_EDITOR_PORT || "4173";
+// Unset means "let CodeYam decide": the CLI picks its own default today and
+// will honour an in-editor provider choice once that lands. The starter only
+// forces a provider when the workspace explicitly asks for one.
+const provider = process.env.CODEYAM_PROVIDER;
+const port = process.env.PORT || process.env.CODEYAM_EDITOR_PORT || "5000";
 
-if (!supportedProviders.has(provider)) {
+if (provider !== undefined && !supportedProviders.has(provider)) {
   console.error(
     `Unsupported CODEYAM_PROVIDER "${provider}". ` +
-      `Choose one of: ${[...supportedProviders].join(", ")}.`,
+      `Choose one of: ${[...supportedProviders].join(", ")}, ` +
+      `or leave it unset to let CodeYam choose.`,
   );
   process.exit(1);
 }
@@ -18,11 +22,17 @@ if (!/^\d+$/.test(port) || Number(port) < 1 || Number(port) > 65535) {
   process.exit(1);
 }
 
+// `codeyam-editor start` only self-initializes an empty folder. This repo ships
+// a package.json, so it reads as an existing project and needs an explicit init.
 if (!existsSync(".codeyam/editor.json")) {
-  console.log(`Initializing CodeYam Editor with the ${provider} provider...`);
+  console.log(
+    provider
+      ? `Initializing CodeYam Editor with the ${provider} provider...`
+      : "Initializing CodeYam Editor...",
+  );
   const init = spawnSync(
     "codeyam-editor",
-    ["init", "--provider", provider],
+    provider ? ["init", "--provider", provider] : ["init"],
     { stdio: "inherit" },
   );
 

@@ -5,7 +5,9 @@ environment. Preserve the CodeYam setup when implementing user requests.
 
 ## Commands
 
-- Run the editor with `npm run codeyam`.
+- Run the editor with `npm run codeyam`. The `CodeYam Editor` workflow in
+  `.replit` is the single supported way to start it, and it waits for port
+  `5000`.
 - Inspect the effective configuration with `npm run doctor`.
 - Change providers with one of `npm run init:claude`, `npm run init:codex`,
   `npm run init:gemini`, or `npm run init:opencode`.
@@ -14,9 +16,11 @@ environment. Preserve the CodeYam setup when implementing user requests.
 
 - Keep application code separate from `.codeyam/` configuration.
 - Do not replace CodeYam Editor with another development environment.
-- Do not change the configured provider unless the user asks.
+- Do not change the configured provider unless the user asks. Leave
+  `CODEYAM_PROVIDER` unset so CodeYam handles provider selection itself.
 - Use `package.json` for project dependencies.
-- Keep the editor server on the port selected by the startup script.
+- Keep the editor server on the port selected by the startup script (`5000`).
+- Do not add a second workflow or change the run button target.
 - Do not remove `--no-open` or change the hosted bind address.
 - Treat `.codeyam/editor.local.json` and AI provider credentials as private.
 

@@ -7,13 +7,13 @@ in a browser-accessible Replit workspace.
 ## Start the editor
 
 1. Create a private Replit project from this repository.
-2. Install the project dependencies.
-3. Click **Run**. Replit invokes `npm run codeyam`.
-4. Open the web preview.
+2. Click **Run**. The `CodeYam Editor` workflow installs dependencies, runs
+   `npm run codeyam`, and waits for port `5000`.
+3. Open the web preview.
 
-The first run initializes CodeYam with Claude as the default AI coding
-provider. To choose another supported provider before the first run, set
-`CODEYAM_PROVIDER` to `codex`, `gemini`, or `opencode`.
+The first run initializes CodeYam and lets you pick an AI coding provider. To
+pin a provider ahead of that first run instead, set `CODEYAM_PROVIDER` to
+`claude`, `codex`, `gemini`, or `opencode`.
 
 ## AI provider required
 
@@ -44,16 +44,17 @@ The startup wrapper uses:
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `CODEYAM_PROVIDER` | `claude` | Provider used during first initialization |
-| `PORT` | `4173` | Editor port assigned by the hosted environment |
-| `CODEYAM_EDITOR_PORT` | `4173` | Fallback when `PORT` is not set |
+| `CODEYAM_PROVIDER` | unset | Pins the provider used during first initialization |
+| `PORT` | `5000` | Editor port assigned by the hosted environment |
+| `CODEYAM_EDITOR_PORT` | `5000` | Fallback when `PORT` is not set |
 
-The editor uses port `4173` by default so it does not collide with CodeYam's
-default application port, `3000`.
+The editor uses port `5000`, the port Replit forwards to the web preview. It
+does not collide with CodeYam's default application port, `3000`.
 
-Provider selection is only applied when `.codeyam/editor.json` does not yet
-exist. This prevents a restart from unexpectedly rewriting an existing
-project's provider setup.
+Leaving `CODEYAM_PROVIDER` unset is the intended path: CodeYam chooses the
+provider itself, so the starter does not have to hardcode one. Provider
+selection is only applied when `.codeyam/editor.json` does not yet exist, which
+prevents a restart from unexpectedly rewriting an existing project's setup.
 
 The editor launcher intentionally is not named `dev` or `start`. CodeYam uses
 those conventional package scripts to detect the application command, so using
