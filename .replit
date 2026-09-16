@@ -1,0 +1,7 @@
+entrypoint = "scripts/start-codeyam.mjs"
+run = "npm run codeyam"
+modules = ["nodejs-20"]
+
+[[ports]]
+localPort = 4173
+externalPort = 80

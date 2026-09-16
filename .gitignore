@@ -1,0 +1,18 @@
+node_modules/
+.cache/
+.env
+.env.*
+!.env.example
+
+# Per-developer CodeYam state
+.codeyam/editor.local.json
+.codeyam/logs/
+.codeyam/run/
+
+# AI provider credentials and local state
+.claude/settings.local.json
+
+# OS and editor files
+.DS_Store
+*.log
+
