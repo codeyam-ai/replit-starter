@@ -28,6 +28,30 @@ npx codeyam-editor editor install-hooks
 That command creates a commit, which is why `npm run setup` does not run it
 for you.
 
+## Smoke-test the hosted first run
+
+```bash
+npm run smoke          # defaults to port 5000
+PORT=5177 npm run smoke # when 5000 is taken
+```
+
+Clones HEAD into a temp dir, runs `npm ci`, starts the editor on `0.0.0.0`, and
+asserts the real first-run sequence: the `cy_session` cookie is issued
+`HttpOnly` and matches `.codeyam/session-token`; a protected endpoint returns
+401 without it and 200 with either the cookie or a bearer token; and
+`/__codeyam_preview/` serves the editor's no-app surface as HTML.
+
+It runs against a throwaway clone, never your working tree — starting the
+editor scaffolds `.codeyam/`, rewrites `.gitignore`, and commits refreshed
+tooling, none of which belongs in your checkout.
+
+Two notes if it fails:
+
+- It needs port `5000` (or `PORT`) **and** port `3000` free. The editor binds a
+  reverse proxy on `3000` for the Live Preview; if it cannot, the preview
+  answers `502` rather than the editor surface.
+- On macOS, AirPlay Receiver holds port `5000` by default, so pass `PORT`.
+
 ## Start the editor
 
 1. Create a private Replit project from this repository.
@@ -106,17 +130,28 @@ CodeYam requires a session token on every control-API request by default:
 - A missing or wrong token is rejected with `401`. Requests from a foreign
   origin, or for a `Host` this editor does not serve, are rejected with `403`.
 
-This is what closes the gap a same-origin check alone leaves open: a browser
-carries the cookie, but a network `curl` that simply sends no `Origin` header
-does not.
+### What this does and does not stop
+
+It stops an *unsolicited* call: a scanner or a drive-by `curl` that goes
+straight at `/api/...` with no `Origin` header is refused, as is a cross-origin
+page and a rebound `Host`.
+
+It does not make the editor safe to expose. The cookie is issued by any HTML
+response, with no authentication in front of it, so anyone who can reach the
+editor can request `/`, receive a valid `cy_session`, and then use it. Verified
+against 0.1.10 from another machine on the LAN: two requests, no credentials,
+full control-API access.
+
+So on Replit, keeping the workspace and its preview private is not
+defense-in-depth on top of the token — it is the control that actually limits
+who can reach a live agent with write access to your source. Treat the token as
+protection against background internet noise, not against someone you gave the
+URL to.
 
 **Do not set `CODEYAM_INSECURE_BIND=1` in this starter.** That flag turns the
 token requirement off on a non-loopback bind. It exists for operators who front
 the editor with their own authenticating proxy, which Replit's preview is not.
 
-Keep the Replit project and its preview private anyway. Authentication protects
-the control API; it is not a reason to treat a development workspace — with its
-source, its provider credentials, and a live agent — as something safe to share.
 Do not deploy this starter as a public application.
 
 If you reach the editor through a tunnel or proxy, add that domain to

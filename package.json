@@ -5,6 +5,7 @@
   "description": "Start CodeYam Editor in a browser-based development environment",
   "scripts": {
     "setup": "node scripts/setup.mjs",
+    "smoke": "node scripts/smoke.mjs",
     "codeyam": "node scripts/start-codeyam.mjs",
     "init:claude": "codeyam-editor init --provider claude",
     "init:codex": "codeyam-editor init --provider codex",

@@ -9,6 +9,8 @@ environment. Preserve the CodeYam setup when implementing user requests.
   `.replit` is the single supported way to start it, and it waits for port
   `5000`.
 - Check the workspace with `npm run setup` — advisory, read-only, exits 0.
+- Test the hosted first run with `npm run smoke`. It needs ports 5000 (or
+  `PORT`) and 3000 free, and runs against a temp clone, not the working tree.
 - Inspect the effective configuration with `npm run doctor`.
 - Change providers with one of `npm run init:claude`, `npm run init:codex`,
   `npm run init:gemini`, or `npm run init:opencode`.
