@@ -162,8 +162,12 @@ unknown `Host`.
 
 [`codeyam-ai/replit-starter-staging`](https://github.com/codeyam-ai/replit-starter-staging)
 is the same starter pointed at the `staging` dist-tag, for trying changes in a
-hosted workspace before they ship. Its `scripts/` are byte-identical to this
-repo's; when you change one here, copy it there.
+hosted workspace before they ship. It shares `setup.mjs` and `smoke.mjs` with
+this repo verbatim — copy those over when you change one here. Its `env.mjs`
+and `start-codeyam.mjs` diverge on purpose: staging declares a
+`server.access.mode` and runs `start --hosted`, neither of which exists in the
+`0.1.10` build pinned here. Both land here too at the next release that has
+them.
 
 The startup banner reports which build is running:
 
