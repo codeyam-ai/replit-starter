@@ -2,22 +2,38 @@ entrypoint = "scripts/start-codeyam.mjs"
 modules = ["nodejs-20"]
 run = "npm run codeyam"
 
+# Exactly one published port. Hosted CodeYam resolves its public origin from
+# this mapping, so a second entry is ambiguous and none leaves the editor bound
+# to a port nothing routes to.
 [[ports]]
 localPort = 5000
 externalPort = 80
 
 [workflows]
-runButton = "CodeYam Editor"
+runButton = "Project"
 
+# The Run button target. Replit's Preview panel attaches to the webview
+# workflow underneath, not to this one.
 [[workflows.workflow]]
-name = "CodeYam Editor"
-author = "codeyam"
-mode = "sequential"
+name = "Project"
+mode = "parallel"
 
 [[workflows.workflow.tasks]]
-task = "packager.installForAll"
+task = "workflow.run"
+args = "Start application"
+
+# The long-running web workflow. It starts the editor and nothing else:
+# installing packages here would make Replit restart the workflow before it
+# ever reaches the start, so the port never opens. Dependencies are installed by
+# the import itself, or explicitly with `npm install`.
+[[workflows.workflow]]
+name = "Start application"
+author = "codeyam"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run codeyam"
 waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"

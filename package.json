@@ -6,6 +6,7 @@
   "scripts": {
     "setup": "node scripts/setup.mjs",
     "smoke": "node scripts/smoke.mjs",
+    "check:replit": "node scripts/check-replit.mjs",
     "codeyam": "node scripts/start-codeyam.mjs",
     "init:claude": "codeyam-editor init --provider claude",
     "init:codex": "codeyam-editor init --provider codex",
