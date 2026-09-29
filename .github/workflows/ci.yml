@@ -16,8 +16,8 @@ jobs:
   workspace-config:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 20
       - run: npm run check:replit
@@ -25,12 +25,12 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         # The smoke test clones HEAD, so it needs real history, not a
         # detached-commit-only checkout.
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 20
       - run: npm ci --no-audit --no-fund
