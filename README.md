@@ -84,21 +84,26 @@ Two notes if it fails:
 ## Start in Replit
 
 1. Import this repository as a **private** Replit project.
-2. Run `npm install` once, in the Shell, if the import did not install
-   dependencies for you.
-3. Click **Run**.
+2. Run the `Set up CodeYam` workflow once (or `npm run bootstrap` in the
+   Shell). It installs the editor, initializes it, and checks that it is
+   ready. If it is interrupted, run it again: it resumes at the first step
+   that is not done. Progress is in `.codeyam-setup.json`.
+3. Click **Run**. If setup has not happened yet, Run stops and says so,
+   naming the setup step that is missing, instead of trying to install.
 4. Replit starts the `Start application` web workflow, which runs
    `npm run codeyam` and waits for port `5000`.
 5. Preview shows the CodeYam provider-selection screen.
 
-That is the whole contract, and `npm run smoke` exercises it. Three things are
+That is the whole contract, and `npm run smoke` exercises it. Four things are
 worth knowing before the first run:
 
 - **Installing packages is separate from Run.** The web workflow only starts
   the editor. Replit restarts a workflow when it detects a package install, so
   an install inside it would restart the workflow before the editor ever binds
   port `5000` — the workflow would loop and Replit would report that the port
-  never opened.
+  never opened. That is why setup is its own workflow.
+- **Signing in to a build agent is not part of setup.** Setup finishes without
+  it; you sign in on the editor's first screen.
 - **Provider setup happens after the editor opens**, on the first screen. To
   pin a provider ahead of that instead, set `CODEYAM_PROVIDER` to `claude`,
   `codex`, `gemini`, or `opencode`.
@@ -151,7 +156,7 @@ The starter leaves the conventional application names free on purpose:
 - Port `3000` is the app's port; the editor is on `5000`.
 
 The one file that needs care is `package.json`: keep the `codeyam`, `setup`,
-`smoke`, `check:replit`, `doctor`, and `init:*` scripts and the
+`bootstrap`, `smoke`, `check:replit`, `doctor`, and `init:*` scripts and the
 `@codeyam-editor/codeyam-editor` dependency, and add the app's own alongside.
 A scaffolder that writes its own `package.json` over ours takes `npm run
 codeyam` with it, and the only symptom is a Run button that appears to do
