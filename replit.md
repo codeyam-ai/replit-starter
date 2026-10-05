@@ -90,9 +90,11 @@ silently does nothing.
   `Start application` workflow. Replit restarts a workflow when it detects a
   package install, so the workflow would restart before the editor binds and
   the port would never open. Install dependencies from the Shell instead.
-- Keep exactly one `[[ports]]` entry, mapping the editor port to an external
-  port. Hosted CodeYam resolves its public origin from that mapping: more than
-  one is ambiguous, none leaves the editor on a port nothing routes to.
+- Keep both `[[ports]]` entries: `5000 -> 80` for the editor and
+  `3000 -> 3000` for the app. Exactly one entry may use external port `80` —
+  hosted CodeYam resolves the editor's public origin from it. The app mapping
+  is what lets the user's browser reach the Live Preview when it moves to the
+  app's own origin; without it the preview renders but ignores clicks.
 - Keep the top-level `run` command identical to the webview workflow's command,
   so every start path reaches the same port.
 - Keep the `[nix]` packages in `.replit`. They are the system libraries the

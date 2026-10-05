@@ -37,7 +37,8 @@ npm run check:replit
 Asserts the committed `.replit` against what a fresh import needs in order to
 reach CodeYam in the Preview panel: the Run button reaches a workflow marked
 `outputType = "webview"`, that workflow waits for the published port, it
-installs no packages, exactly one `[[ports]]` entry is published, every start
+installs no packages, exactly one `[[ports]]` entry publishes on external
+port `80` (the editor), the app port `3000` is published too, every start
 path runs the same command, nothing configures the workspace for deployment,
 and the `[nix]` block lists the system libraries headless Chromium needs.
 
@@ -155,7 +156,10 @@ The starter leaves the conventional application names free on purpose:
 
 - `dev` is the app's dev-server script. CodeYam detects it as the app start
   command, which is why nothing in the starter is named `dev` or `start`.
-- Port `3000` is the app's port; the editor is on `5000`.
+- Port `3000` is the app's port; the editor is on `5000`. `.replit` already
+  publishes `3000`, so when the Live Preview moves to the app's own origin
+  (an app that will not hydrate under the editor's preview subpath) your
+  browser can reach it without any extra setup.
 
 The one file that needs care is `package.json`: keep the `codeyam`, `setup`,
 `smoke`, `check:replit`, `doctor`, and `init:*` scripts and the
