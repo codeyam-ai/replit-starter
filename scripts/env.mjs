@@ -53,5 +53,21 @@ export function childEnv() {
     ...process.env,
     npm_config_prefix: prefix,
     PATH: `${bin}${delimiter}${process.env.PATH ?? ""}`,
+    ...libraryPath(),
+  };
+}
+
+/// Replit exposes the libraries of the `.replit` `[nix]` packages through
+/// REPLIT_LD_LIBRARY_PATH. The headless Chromium the editor launches for
+/// previews is a Playwright download, not a Nix binary, so it may not see that
+/// path on its own. Fold it into LD_LIBRARY_PATH for the editor and everything
+/// it spawns, so a preview capture finds those libraries without anyone having
+/// to work out why a `.so` is missing. A no-op off Replit.
+function libraryPath() {
+  const replit = process.env.REPLIT_LD_LIBRARY_PATH;
+  if (!replit) return {};
+  const current = process.env.LD_LIBRARY_PATH;
+  return {
+    LD_LIBRARY_PATH: current ? `${replit}${delimiter}${current}` : replit,
   };
 }

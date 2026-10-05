@@ -95,6 +95,10 @@ silently does nothing.
   one is ambiguous, none leaves the editor on a port nothing routes to.
 - Keep the top-level `run` command identical to the webview workflow's command,
   so every start path reaches the same port.
+- Keep the `[nix]` packages in `.replit`. They are the system libraries the
+  editor's headless Chromium needs to capture previews; removing one breaks
+  every preview, and restoring it means restarting the workflow, which ends the
+  agent session running inside it. Add packages alongside them; do not prune.
 - Do not add a `[deployment]` section or configure this workspace for
   deployment. The preview of a workspace running an AI agent with write access
   to the repo stays private.
